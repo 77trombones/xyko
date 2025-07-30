@@ -1,0 +1,125 @@
+CREATE TABLE TBFuncao (
+    IDFuncao INT PRIMARY KEY,
+    DescricaoFuncao VARCHAR(100),
+    Observacao VARCHAR(MAX)
+);
+
+CREATE TABLE TBSituacao (
+    IDSituacao INT PRIMARY KEY,
+    DescricaoSituacao VARCHAR(200)
+);
+
+CREATE TABLE TBEstado (
+    UF VARCHAR(2) PRIMARY KEY,
+    NomeEstado VARCHAR(50)
+);
+
+CREATE TABLE TBCidade (
+    IDCidade INT PRIMARY KEY,
+    NomeCidade VARCHAR(50),
+    CodUF VARCHAR(2),
+    FOREIGN KEY (CodUF) REFERENCES TBEstado(UF)
+);
+
+CREATE TABLE TBPessoa (
+    IDPessoa INT PRIMARY KEY,
+    NomePessoa VARCHAR(50),
+    Endereco VARCHAR(80),
+    Telefone VARCHAR(20),
+    CEP VARCHAR(12),
+    CodCidade INT,
+    FOREIGN KEY (CodCidade) REFERENCES TBCidade(IDCidade)
+);
+
+CREATE TABLE TBFuncionario (
+    CodFuncionario INT PRIMARY KEY,
+    CodPessoa INT,
+    DataNascimento DATE,
+    DataAdmissao DATE,
+    Sexo VARCHAR(1),
+    CodFuncao INT,
+    FOREIGN KEY (CodPessoa) REFERENCES TBPessoa(IDPessoa),
+    FOREIGN KEY (CodFuncao) REFERENCES TBFuncao(IDFuncao)
+);
+
+CREATE TABLE TBEngenheiro (
+    CodEngenheiro INT PRIMARY KEY,
+    NumeroCREA VARCHAR(12),
+    CPF BIGINT,
+    RG VARCHAR(12),
+    DataNascimento DATE,
+    Sexo VARCHAR(1),
+    CodCidade INT,
+    FOREIGN KEY (CodCidade) REFERENCES TBCidade(IDCidade)
+);
+
+CREATE TABLE TBProjeto (
+    IDProjeto INT PRIMARY KEY,
+    DescricaoProjeto VARCHAR(MAX),
+    DataInicio DATE,
+    DataFim DATE,
+    Observacao VARCHAR(MAX),
+    CodEngenheiro INT,
+    FOREIGN KEY (CodEngenheiro) REFERENCES TBEngenheiro(CodEngenheiro)
+);
+
+CREATE TABLE TBSituacaoPeca (
+    IDSituacao INT PRIMARY KEY,
+    Descricao VARCHAR(MAX),
+    DataSituacao DATE,
+    Observacao VARCHAR(MAX)
+);
+
+CREATE TABLE TBPeca (
+    IDPeca INT PRIMARY KEY,
+    DescricaoPeca VARCHAR(MAX),
+    ComprimentoPeca DECIMAL(10,2),
+    CustoPeca DECIMAL(10,2),
+    TempoProducao TIME,
+    CodSituacao INT,
+    FOREIGN KEY (CodSituacao) REFERENCES TBSituacaoPeca(IDSituacao)
+);
+
+CREATE TABLE TBProjetoPeca (
+    CodProjeto INT,
+    CodPeca INT,
+    DataInicio DATE,
+    DataFim DATE,
+    CustoProjeto DECIMAL(10,2),
+    Observacao VARCHAR(MAX),
+    FOREIGN KEY (CodProjeto) REFERENCES TBProjeto(IDProjeto),
+    FOREIGN KEY (CodPeca) REFERENCES TBPeca(IDPeca)
+);
+
+CREATE TABLE TBFabricante (
+    CodFabricante INT PRIMARY KEY,
+    CNPJ VARCHAR(15),
+    InscricaoEstadual VARCHAR(15),
+    Observacao VARCHAR(MAX),
+    CodCidade INT,
+    FOREIGN KEY (CodCidade) REFERENCES TBCidade(IDCidade)
+);
+
+CREATE TABLE TBProducaoPeca (
+    CodFuncionario INT,
+    CodPeca INT,
+    CodFabricante INT,
+    DataInicio DATE,
+    DataFim DATE,
+    TempoGasto TIME,
+    CustoPeca DECIMAL(10,2),
+    FOREIGN KEY (CodFuncionario) REFERENCES TBFuncionario(CodFuncionario),
+    FOREIGN KEY (CodPeca) REFERENCES TBPeca(IDPeca),
+    FOREIGN KEY (CodFabricante) REFERENCES TBFabricante(CodFabricante)
+);
+
+CREATE TABLE TBFabricantePeca (
+    CodFabricante INT,
+    CodPeca INT,
+    DataInicio DATE,
+    DataFim DATE,
+    TempoGasto TIME,
+    CustoFabricacao DECIMAL(10,2),
+    FOREIGN KEY (CodFabricante) REFERENCES TBFabricante(CodFabricante),
+    FOREIGN KEY (CodPeca) REFERENCES TBPeca(IDPeca)
+);
